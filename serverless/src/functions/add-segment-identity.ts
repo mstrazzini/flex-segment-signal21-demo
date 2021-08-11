@@ -16,7 +16,7 @@ export const handler: ServerlessFunctionSignature = (
   callback: ServerlessCallback
 ) => {
   const { SEGMENT_WRITE_KEY } = context
-  const analytics = new Analytics(SEGMENT_WRITE_KEY as string, { flushAt: 1, flushInterval: 2 })
+  const analytics = new Analytics(SEGMENT_WRITE_KEY as string)
   const userId = Math.floor(Math.random() * 10001) + 1001
   const newIdentity = { 
     userId,
@@ -25,13 +25,15 @@ export const handler: ServerlessFunctionSignature = (
       email: `demo${userId}@company.com`
     }
   }
+
+  const flushCallback = (err: Error, data: any) => {
+    if (err) callback(err)
+    callback(null, data || newIdentity)
+  }
   
   analytics.identify(newIdentity)
-
+  
   setTimeout(() => {
-    analytics.flush((err, data) => {
-      if (err) callback(err)
-      callback(null, data || newIdentity)
-    })
-  }, 3000)
+    analytics.flush(flushCallback)
+  }, 2000)
 }
