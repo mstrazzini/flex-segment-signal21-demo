@@ -19,25 +19,25 @@ export const handler: ServerlessFunctionSignature = (
   event: EventPayload,
   callback: ServerlessCallback
 ) => {
-  const twilioClient = context.getTwilioClient()
-
   if (!event.to) {
     callback('MISSING_TO_NUMBER')
-  } else if (!event.body) {
-    callback('EMPTY_MESSAGE')
-  } else {
-    twilioClient.messages
-      .create({
-        from: context.SMS_FROM_NUMBER,
-        to: event.to as string,
-        body: event.body as string
-      })
-      .then(result => {
-        callback(null, result)
-      })
-      .catch(err => {
-        console.error(err)
-        callback(err)
-      })
   }
+  
+  if (!event.body) {
+    callback('EMPTY_MESSAGE')
+  }
+
+  context.getTwilioClient().messages
+    .create({
+      from: context.SMS_FROM_NUMBER,
+      to: event.to as string,
+      body: event.body as string
+    })
+    .then(result => {
+      callback(null, result)
+    })
+    .catch(err => {
+      console.error(err)
+      callback(err)
+    })
 }
