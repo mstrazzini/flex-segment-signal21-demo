@@ -11,20 +11,27 @@ type CustomContext = {
   DEMO_CUSTOMER_PHONE?: string
 }
 
+type EventPayload = {
+  userId?: string,
+  email?: string,
+  name?: string,
+  phoneNumber?: string
+}
+
 export const handler: ServerlessFunctionSignature = (
   context: Context<CustomContext>,
-  event,
+  event: EventPayload,
   callback: ServerlessCallback
 ) => {
   const { SEGMENT_WRITE_KEY, DEMO_CUSTOMER_PHONE } = context
   const analytics = new Analytics(SEGMENT_WRITE_KEY as string)
-  const userId = Math.floor(Math.random() * 10001) + 1001
+  const userId = event.userId || Math.floor(Math.random() * 8999) + 1001
   const newIdentity = { 
     userId,
     traits: {
-      name: `Demo User ${userId}`,
-      email: `demo${userId}@company.com`,
-      phoneNumber: DEMO_CUSTOMER_PHONE
+      name: event.name || `Demo User ${userId}`,
+      email: event.email || `demo${userId}@company.com`,
+      phoneNumber: event.phoneNumber || DEMO_CUSTOMER_PHONE
     }
   }
 

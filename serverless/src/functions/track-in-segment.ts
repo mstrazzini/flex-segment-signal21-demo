@@ -36,7 +36,6 @@ export const handler: ServerlessFunctionSignature = (
         console.error(err)
         callback(err)
       } else {
-        console.info('Event Data =>', JSON.stringify(data))
         callback(null, data)
       }
     })

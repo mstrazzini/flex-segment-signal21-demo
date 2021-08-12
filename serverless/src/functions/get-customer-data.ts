@@ -32,8 +32,9 @@ export const handler: ServerlessFunctionSignature = async (
       }
     })
 
-    if (result.data) {
-      callback(null, result.data)
+    if (result.data && result.data.traits) {
+      const { traits: data } = result.data
+      callback(null, { data })
     } else {
       callback('NOT_FOUND')
     }
