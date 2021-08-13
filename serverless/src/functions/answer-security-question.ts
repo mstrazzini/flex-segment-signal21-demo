@@ -81,14 +81,6 @@ export const handler: ServerlessFunctionSignature = async (
     })
   }
 
-
-  // Trigger CARD_DECLINED event
-  // analytics.track({
-  //   userId,
-  //   event: 'CARD_DECLINED',
-  //   properties: { reason, amount, city, merchantName, cardBlocked, notifyBy }
-  // })
-
   setTimeout(() => {
     // Flush all pending data to Segment
     analytics.flush((err: Error, data: any) => {
