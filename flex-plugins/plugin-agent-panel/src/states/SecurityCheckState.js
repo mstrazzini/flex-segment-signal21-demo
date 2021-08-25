@@ -1,11 +1,11 @@
-const ACTION_DISMISS_BAR = 'DISMISS_BAR';
+const ACTION_DISMISS_BAR = 'DISMISS_BAR'
 
 const initialState = {
   isOpen: true,
-};
+}
 
 export class Actions {
-  static dismissBar = () => ({ type: ACTION_DISMISS_BAR });
+  static dismissBar = () => ({ type: ACTION_DISMISS_BAR })
 }
 
 export function reduce(state = initialState, action) {
@@ -14,10 +14,10 @@ export function reduce(state = initialState, action) {
       return {
         ...state,
         isOpen: false,
-      };
+      }
     }
 
     default:
-      return state;
+      return state
   }
 }

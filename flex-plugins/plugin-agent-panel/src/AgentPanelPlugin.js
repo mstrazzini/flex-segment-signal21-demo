@@ -1,15 +1,15 @@
-import React from 'react';
-import { VERSION } from '@twilio/flex-ui';
-import { FlexPlugin } from 'flex-plugin';
+import React from 'react'
+import { VERSION } from '@twilio/flex-ui'
+import { FlexPlugin } from 'flex-plugin'
 
-import CustomTaskListContainer from './components/CustomTaskList/CustomTaskList.Container';
-import reducers, { namespace } from './states';
+import SecurityCheckContainer from './components/SecurityCheck/SecurityCheck.Container'
+import reducers, { namespace } from './states'
 
-const PLUGIN_NAME = 'AgentPanelPlugin';
+const PLUGIN_NAME = 'SecurityCheckPlugin'
 
-export default class AgentPanelPlugin extends FlexPlugin {
+export default class SecurityCheckPlugin extends FlexPlugin {
   constructor() {
-    super(PLUGIN_NAME);
+    super(PLUGIN_NAME)
   }
 
   /**
@@ -20,8 +20,9 @@ export default class AgentPanelPlugin extends FlexPlugin {
    * @param manager { import('@twilio/flex-ui').Manager }
    */
   init(flex, manager) {
-    this.registerReducers(manager);
-    flex.AgentDesktopView.Panel2.Content.replace(<div>TEST</div>)
+    this.registerReducers(manager)
+    flex.AgentDesktopView.Panel2.Content
+      .replace(<SecurityCheckContainer key='SecurityCheckPlugin-component' />)
 
     // const options = { sortOrder: -1 };
     // flex.AgentDesktopView
@@ -38,10 +39,10 @@ export default class AgentPanelPlugin extends FlexPlugin {
   registerReducers(manager) {
     if (!manager.store.addReducer) {
       // eslint: disable-next-line
-      console.error(`You need FlexUI > 1.9.0 to use built-in redux; you are currently on ${VERSION}`);
-      return;
+      console.error(`You need FlexUI > 1.9.0 to use built-in redux; you are currently on ${VERSION}`)
+      return
     }
 
-    manager.store.addReducer(namespace, reducers);
+    manager.store.addReducer(namespace, reducers)
   }
 }

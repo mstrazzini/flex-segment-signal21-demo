@@ -1,11 +1,11 @@
-import { combineReducers } from 'redux';
+import { combineReducers } from 'redux'
 
-import { reduce as CustomTaskListReducer } from './CustomTaskListState';
+import { reduce as SecurityCheckReducer } from './SecurityCheckState'
 
 // Register your redux store under a unique namespace
-export const namespace = 'agent-panel';
+export const namespace = 'security-check'
 
 // Combine the reducers
 export default combineReducers({
-  customTaskList: CustomTaskListReducer
-});
+  securityCheck: SecurityCheckReducer
+})

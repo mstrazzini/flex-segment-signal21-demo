@@ -1,6 +1,6 @@
-import { default as styled } from 'react-emotion';
+import { default as styled } from 'react-emotion'
 
-export const CustomTaskListComponentStyles = styled('div')`
+export const SecurityCheckComponentStyles = styled('div')`
   padding: 10px;
   margin: 0px;
   color: #fff;
@@ -11,4 +11,4 @@ export const CustomTaskListComponentStyles = styled('div')`
     cursor: pointer;
     float: right;
   }
-`;
+`
