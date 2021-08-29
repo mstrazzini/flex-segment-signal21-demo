@@ -8,8 +8,23 @@ const initialState = {
 }
 
 export class Actions {
-  static updateSecurityQuestions = () => ({ type: ACTION_UPDATE_SECURITY_QUESTIONS })
-  static completeSecurityQuestion = () => ({ type: ACTION_COMPLETE_SECURITY_QUESTION })
+  static updateSecurityQuestions = (taskSid, securityQuestions) => {
+    console.log('LOG => updateSecurityQuestions called', taskSid, securityQuestions)
+    return { 
+      type: ACTION_UPDATE_SECURITY_QUESTIONS,
+      payload: {
+        taskSid,
+        securityQuestions
+      } 
+    }
+  }
+  static completeSecurityQuestion = (taskSid, questionId) => ({
+    type: ACTION_COMPLETE_SECURITY_QUESTION,
+    payload: {
+      taskSid,
+      questionId
+    }
+  })
 }
 
 export function reduce(state = initialState, action) {
@@ -33,7 +48,16 @@ export function reduce(state = initialState, action) {
         securityQuestionsMap: {
           ...state.securityQuestionsMap,
           [taskSid]: state.securityQuestionsMap[taskSid]
-            .filter(i => i.id !== questionId)
+            .map(i => {
+              if (i.id === questionId) {
+                return {
+                  ...i,
+                  status: 'ANSWERED'
+                }
+              } else {
+                return i
+              }
+            })
         }
       }
     }

@@ -1,6 +1,6 @@
 import { Component } from 'react'
 import { Box, Button, Label, Input } from '@twilio-paste/core'
-import { withTaskContext } from '@twilio/flex-ui'
+import { Actions, withTaskContext } from '@twilio/flex-ui'
 import axios from 'axios'
 
 class SecurityQuestion extends Component {
@@ -8,8 +8,6 @@ class SecurityQuestion extends Component {
     super(props)
     console.log('LOG => SECURITY QUESTION RENDERED ')
     this.state = {
-      userId: this.props.userId,
-      question: this.props.question,
       checkingAnswer: false,
       serviceUrl: 'https://serverless-9217-dev.twil.io/answer-security-question'
     }
@@ -23,7 +21,8 @@ class SecurityQuestion extends Component {
 
   async checkAnswer(event) {
     console.log('LOG => CLICKED =>', this.state)
-    const { userId, question, answer, serviceUrl } = this.state
+    const { answer, serviceUrl } = this.state
+    const { userId, question } = this.props
 
     if (answer) {
       this.setState({ checkingAnswer: true })
@@ -38,20 +37,10 @@ class SecurityQuestion extends Component {
         } else {
           const result = response.data
           const { task } = this.props
-          const { customerData } = task.attributes
           console.log('LOG => ANSWER CHECK RESULT =>', result, task)
 
           if (result === 'CORRECT') {
-            this.setState({ question: {
-              status: 'ANSWERED'
-            }})
-            // const { attributes } = task
-            // attributes.customerData.securityQuestions = customerData.securityQuestions.filter(i => i.id !== question.id)
-
-            // console.log('LOG => UPDATED TASK ATTRIBUTES', attributes) 
-
-            // task.setAttributes(attributes)
-            // console.log('LOG => TASK FROM QUESTION =>', task)
+            Actions.invokeAction('securityQuestionAnswered', question.id)
           }
         }
       })
@@ -59,36 +48,32 @@ class SecurityQuestion extends Component {
   }
 
   render() {
-    console.log('LOG => STATE =>', this.state)
-    const { question, checkingAnswer, answer } = this.state
-    const { task } = this.props
+    const { checkingAnswer, answer } = this.state
+    const { question } = this.props
+    console.log('LOG => RENDERING SEC QUESTION', question)
 
-    if (question.status === 'PENDING') {
-      return (
-        <Box marginBottom='space40'>
-          <Label required>{question.label}</Label>
-          <Input
-            id={question.id}
-            name={question.id}
-            type='text'
-            onChange={this.updateAnswer}
-            insertAfter={
-              <Button 
-                variant="secondary"
-                id={`btn_${question.id}`}
-                onClick={this.checkAnswer}
-                loading={checkingAnswer}
-                disabled={!answer}
-              >
-                Check
-              </Button>
-            }
-          />
-        </Box>
-      )
-    } else {
-      return null
-    }
+    return (
+      <Box marginBottom='space40'>
+        <Label required>{question.label}</Label>
+        <Input
+          id={question.id}
+          name={question.id}
+          type='text'
+          onChange={this.updateAnswer}
+          insertAfter={
+            <Button 
+              variant="secondary"
+              id={`btn_${question.id}`}
+              onClick={this.checkAnswer}
+              loading={checkingAnswer}
+              disabled={!answer}
+            >
+              Check
+            </Button>
+          }
+        />
+      </Box>
+    )
   }
 }
 
