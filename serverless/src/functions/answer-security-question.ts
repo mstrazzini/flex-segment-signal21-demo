@@ -24,6 +24,11 @@ export const handler: ServerlessFunctionSignature = async (
   event: EventPayload,
   callback: ServerlessCallback
 ) => {
+  const response = new Twilio.Response()
+  response.appendHeader('Access-Control-Allow-Origin', '*')
+  response.appendHeader('Access-Control-Allow-Methods', 'OPTIONS, POST, GET')
+  response.appendHeader('Access-Control-Allow-Headers', 'Content-Type')
+
   const { SEGMENT_WRITE_KEY, PROFILE_API_SPACE_ID, PROFILE_API_TOKEN } = context
   const analytics = new Analytics(SEGMENT_WRITE_KEY as string)
   const { userId, questionId, answer } = event
@@ -43,7 +48,10 @@ export const handler: ServerlessFunctionSignature = async (
     }
   } catch (error) {
     console.error(error)
-    callback(error)
+    response.appendHeader('Content-Type', 'plain/text')
+    response.setBody(error.message)
+    response.setStatusCode(500)
+    callback(null, response)
   }
   
   const securityQuestions: any[] = customerData.securityQuestions
@@ -84,8 +92,17 @@ export const handler: ServerlessFunctionSignature = async (
   setTimeout(() => {
     // Flush all pending data to Segment
     analytics.flush((err: Error, data: any) => {
-      if (err) callback(err)
-      callback(null, answerIsCorrect ? 'CORRECT': 'WRONG')
+      if (err) {
+        console.error(err)
+        response.appendHeader('Content-Type', 'plain/text')
+        response.setBody(err.message)
+        response.setStatusCode(500)
+        callback(null, response)
+      } else {
+        response.appendHeader('Content-Type', 'plain/text')
+        response.setBody(answerIsCorrect ? 'CORRECT': 'WRONG')
+        callback(null, response)
+      }
     })
   }, 2000)
   

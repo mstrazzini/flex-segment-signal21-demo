@@ -101,7 +101,7 @@ export const handler: ServerlessFunctionSignature = async (
           .create({
             from: context.SMS_FROM_NUMBER,
             to: DEMO_CUSTOMER_PHONE as string, // TODO: get number from user traits
-            body: `Your card has been suspended by fraud prevention. Please contact us as ${CALL_CENTER_NUMBER}`
+            body: `Your card has been suspended by fraud prevention. Please contact us at ${CALL_CENTER_NUMBER}`
           })
           .then(result => {
             console.info(`SMS notification sent sucessfully (${result.sid})`)

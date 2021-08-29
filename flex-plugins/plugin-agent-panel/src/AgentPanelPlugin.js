@@ -12,30 +12,15 @@ export default class SecurityCheckPlugin extends FlexPlugin {
     super(PLUGIN_NAME)
   }
 
-  /**
-   * This code is run when your plugin is being started
-   * Use this to modify any UI components or attach to the actions framework
-   *
-   * @param flex { typeof import('@twilio/flex-ui') }
-   * @param manager { import('@twilio/flex-ui').Manager }
-   */
   init(flex, manager) {
     this.registerReducers(manager)
-    flex.AgentDesktopView.Panel2.Content
-      .replace(<SecurityCheckContainer key='SecurityCheckPlugin-component' />)
 
-    // const options = { sortOrder: -1 };
-    // flex.AgentDesktopView
-    //   .Panel1
-    //   .Content
-    //   .add(<CustomTaskListContainer key="AgentPanelPlugin-component" />, options);
+    console.log('LOG => blablabla')
+
+    flex.AgentDesktopView.Panel2.Content
+      .replace(<SecurityCheckContainer key='sec-check' />)
   }
 
-  /**
-   * Registers the plugin reducers
-   *
-   * @param manager { Flex.Manager }
-   */
   registerReducers(manager) {
     if (!manager.store.addReducer) {
       // eslint: disable-next-line

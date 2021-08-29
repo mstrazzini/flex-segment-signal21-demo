@@ -21,6 +21,11 @@ export const handler: ServerlessFunctionSignature = async (
   event: EventPayload,
   callback: ServerlessCallback
 ) => {
+  const response = new Twilio.Response()
+  response.appendHeader('Access-Control-Allow-Origin', '*')
+  response.appendHeader('Access-Control-Allow-Methods', 'OPTIONS, POST, GET')
+  response.appendHeader('Access-Control-Allow-Headers', 'Content-Type')
+
   const { SEGMENT_WRITE_KEY } = context
   const analytics = new Analytics(SEGMENT_WRITE_KEY as string)
 
@@ -39,8 +44,17 @@ export const handler: ServerlessFunctionSignature = async (
   setTimeout(() => {
     // Flush all pending data to Segment
     analytics.flush((err: Error, data: any) => {
-      if (err) callback(err)
-      callback(null, 'SUCCESS')
+      if (err) {
+        console.error(err)
+        response.appendHeader('Content-Type', 'plain/text')
+        response.setBody(err.message)
+        response.setStatusCode(500)
+        callback(null, response)
+      } else {
+        response.appendHeader('Content-Type', 'plain/text')
+        response.setBody('SUCCESS')
+        callback(null, response)
+      }
     })
   }, 2000)
 }
