@@ -65,7 +65,6 @@ class SecurityCheck extends Component {
 
   componentDidMount() {
     const { task } = this.props
-    console.log('LOG => TASK ATTRIBUTES AT componentDidMount', task.attributes)
     if (!this.state.securityQuestionsLoaded && task && task.attributes.customerData) {
       const { securityQuestions } = task.attributes.customerData
       console.log('LOG => Loading sec questions for task', task.taskSid, securityQuestions)
@@ -99,7 +98,7 @@ class SecurityCheck extends Component {
             </Box>
           </Theme.Provider>
         )
-      } else if (this.state.cardStatus === 'BLOCKED') {
+      } else if (pendingSecurityQuestions.length === 0 && this.state.cardStatus === 'BLOCKED') {
         return (
           <Theme.Provider theme='default'>
             <Box marginTop="space30" marginBottom="space30" padding="space30">
