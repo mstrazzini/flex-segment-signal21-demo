@@ -59,6 +59,7 @@ class SecurityQuestion extends Component {
           id={question.id}
           name={question.id}
           type='text'
+          defaultValue=''
           onChange={this.updateAnswer}
           insertAfter={
             <Button 

@@ -4,6 +4,7 @@ import { Theme } from '@twilio-paste/core/theme'
 import { Actions, withTaskContext } from '@twilio/flex-ui'
 import SecurityQuestion from '../SecurityQuestion'
 import _ from 'lodash'
+import axios from 'axios'
 
 class SecurityCheck extends Component {
   constructor(props) {
@@ -13,7 +14,8 @@ class SecurityCheck extends Component {
     this.state = {
       securityQuestions: [],
       unblockingCard: false,
-      cardStatus: 'BLOCKED'
+      cardStatus: 'BLOCKED',
+      serviceUrl: 'https://serverless-9217-dev.twil.io/unblock-card'
     }
 
     Actions.registerAction('securityQuestionAnswered', (event) => {
@@ -39,16 +41,26 @@ class SecurityCheck extends Component {
     })
   }
 
-  unblockCard(event) {
-    console.log('LOG => UNBLOCKING CARD')
+  async unblockCard(event) {
+    const userId = event
+    console.log('LOG => UNBLOCKING CARD FOR USER ID', userId)
     this.setState({ unblockingCard: true })
-    // TODO: Implement Unblock Card logic (webservice call)
-    setTimeout(() => {
-      this.setState({
-        unblockingCard: false,
-        cardStatus: 'UNBLOCKED'
-      })
-    }, 2000)
+    
+    await axios.post(this.state.serviceUrl, {
+      userId,
+    }).then(response => {
+      this.setState({ unblockingCard: false })
+      if (response.error) {
+        console.error(response.error)
+      } else {
+        const result = response.data
+        console.log('LOG => UNBLOCK CARD RESULT =>', result)
+
+        if (result === 'SUCCESS') {
+          this.setState({ cardStatus: 'UNBLOCKED' })
+        }
+      }
+    })
   }
 
   componentDidMount() {
@@ -98,7 +110,7 @@ class SecurityCheck extends Component {
               <Button 
                 variant="primary"
                 id={`btn_unblock_card`}
-                onClick={this.unblockCard}
+                onClick={e => this.unblockCard(customerData.userId, e)}
                 loading={unblockingCard}
               >
                 Unblock Card
