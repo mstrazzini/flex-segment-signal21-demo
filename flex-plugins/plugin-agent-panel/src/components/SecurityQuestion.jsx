@@ -45,13 +45,13 @@ class SecurityQuestion extends Component {
             this.setState({ question: {
               status: 'ANSWERED'
             }})
-            const { attributes } = task
-            attributes.customerData.securityQuestions = customerData.securityQuestions.filter(i => i.id !== question.id)
+            // const { attributes } = task
+            // attributes.customerData.securityQuestions = customerData.securityQuestions.filter(i => i.id !== question.id)
 
-            console.log('LOG => UPDATED TASK ATTRIBUTES', attributes) 
+            // console.log('LOG => UPDATED TASK ATTRIBUTES', attributes) 
 
-            task.setAttributes(attributes)
-            console.log('LOG => TASK FROM QUESTION =>', task)
+            // task.setAttributes(attributes)
+            // console.log('LOG => TASK FROM QUESTION =>', task)
           }
         }
       })

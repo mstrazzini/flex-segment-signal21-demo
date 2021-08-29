@@ -5,11 +5,12 @@ import { Actions } from '../../states/SecurityCheckState'
 import SecurityCheck from './SecurityCheck'
 
 const mapStateToProps = (state) => ({
-    isOpen: state['security-check'].securityCheck.isOpen,
+    securityQuestionsMap: state['security-check'].securityQuestionsMap,
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  dismissBar: bindActionCreators(Actions.dismissBar, dispatch),
+  updateSecurityQuestions: bindActionCreators(Actions.updateSecurityQuestions, dispatch),
+  completeSecurityQuestion: bindActionCreators(Actions.completeSecurityQuestion, dispatch)
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(SecurityCheck)
