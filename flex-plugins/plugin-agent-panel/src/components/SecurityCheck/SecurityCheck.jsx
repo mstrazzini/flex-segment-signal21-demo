@@ -13,6 +13,7 @@ class SecurityCheck extends Component {
     this.unblockCard = this.unblockCard.bind(this)
     this.state = {
       securityQuestions: [],
+      loadedSecurityQuestions: false,
       unblockingCard: false,
       cardStatus: 'BLOCKED',
       serviceUrl: 'https://serverless-9217-dev.twil.io/unblock-card'
@@ -68,7 +69,7 @@ class SecurityCheck extends Component {
     if (!this.state.securityQuestionsLoaded && task && task.attributes.customerData) {
       const { securityQuestions } = task.attributes.customerData
       console.log('LOG => Loading sec questions for task', task.taskSid, securityQuestions)
-      this.setState({ securityQuestions })
+      this.setState({ securityQuestions, loadedSecurityQuestions: true })
     }
   }
 
@@ -83,6 +84,10 @@ class SecurityCheck extends Component {
         .filter(i => i.status === 'PENDING')
       console.log('LOG => PENDING SEC QUESTIONS =>', pendingSecurityQuestions)
       
+      if (!this.state.loadedSecurityQuestions) {
+        return null
+      }
+
       if (pendingSecurityQuestions.length > 0) {
         return (
           <Theme.Provider theme='default'>
@@ -98,7 +103,18 @@ class SecurityCheck extends Component {
             </Box>
           </Theme.Provider>
         )
-      } else if (pendingSecurityQuestions.length === 0 && this.state.cardStatus === 'BLOCKED') {
+      } else if (this.state.cardStatus === 'UNBLOCKED') {
+        return (
+          <Theme.Provider theme='default'>
+            <Box marginTop="space30" marginBottom="space30" padding="space30">
+              <Heading as='h1' variant='heading10'>Security Check</Heading>
+              <Heading as='h3' variant='heading30'>
+                Card has been successfully unblocked!
+              </Heading>
+            </Box>
+          </Theme.Provider>
+        )
+      } else {
         return (
           <Theme.Provider theme='default'>
             <Box marginTop="space30" marginBottom="space30" padding="space30">
@@ -114,17 +130,6 @@ class SecurityCheck extends Component {
               >
                 Unblock Card
               </Button>
-            </Box>
-          </Theme.Provider>
-        )
-      } else if (this.state.cardStatus === 'UNBLOCKED') {
-        return (
-          <Theme.Provider theme='default'>
-            <Box marginTop="space30" marginBottom="space30" padding="space30">
-              <Heading as='h1' variant='heading10'>Security Check</Heading>
-              <Heading as='h3' variant='heading30'>
-                Card has been successfully unblocked!
-              </Heading>
             </Box>
           </Theme.Provider>
         )
