@@ -66,6 +66,7 @@ class SecurityCheck extends Component {
 
   componentDidMount() {
     const { task } = this.props
+    console.log('LOG => COMPONENT SecurityCheck mounted', task)
     if (!this.state.securityQuestionsLoaded && task && task.attributes.customerData) {
       const { securityQuestions } = task.attributes.customerData
       console.log('LOG => Loading sec questions for task', task.taskSid, securityQuestions)
@@ -83,6 +84,7 @@ class SecurityCheck extends Component {
       const pendingSecurityQuestions = this.state.securityQuestions
         .filter(i => i.status === 'PENDING')
       console.log('LOG => PENDING SEC QUESTIONS =>', pendingSecurityQuestions)
+      console.log('LOG => LOCAL STATE =>', this.state)
       
       if (!this.state.loadedSecurityQuestions) {
         return null
