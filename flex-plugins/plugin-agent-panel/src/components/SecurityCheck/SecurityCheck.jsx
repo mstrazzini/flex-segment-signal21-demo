@@ -15,7 +15,7 @@ class SecurityCheck extends Component {
       securityQuestions: [],
       loadedSecurityQuestions: false,
       unblockingCard: false,
-      cardStatus: 'BLOCKED',
+      cardStatus: 'UNKNOWN',
       serviceUrl: 'https://serverless-9217-dev.twil.io/unblock-card'
     }
 
@@ -40,6 +40,19 @@ class SecurityCheck extends Component {
         console.log('LOG => LOCAL STATE SNAPSHOT AFTER UPDATE =>', this.state)
       })
     })
+
+    Actions.addListener('beforeAcceptTask', payload => {
+      console.log('LOG => beforeAcceptTask payload', payload)
+      this.setState({
+        securityQuestions: [],
+        cardStatus: 'UNKNOWN'
+      }, () => {
+        const { task } = payload
+        const { securityQuestions } = task.attributes.customerData
+        console.log('LOG => Loading sec questions for task', task.taskSid, securityQuestions)
+        this.setState({ securityQuestions, loadedSecurityQuestions: true, cardStatus: 'BLOCKED' })
+      })
+    })
   }
 
   async unblockCard(event) {
@@ -58,7 +71,7 @@ class SecurityCheck extends Component {
         console.log('LOG => UNBLOCK CARD RESULT =>', result)
 
         if (result === 'SUCCESS') {
-          this.setState({ cardStatus: 'UNBLOCKED' })
+          this.setState({ cardStatus: 'UNBLOCKED', securityQuestions: [] })
         }
       }
     })
@@ -67,12 +80,18 @@ class SecurityCheck extends Component {
   componentDidMount() {
     const { task } = this.props
     console.log('LOG => COMPONENT SecurityCheck mounted', task)
-    if (!this.state.securityQuestionsLoaded && task && task.attributes.customerData) {
-      const { securityQuestions } = task.attributes.customerData
-      console.log('LOG => Loading sec questions for task', task.taskSid, securityQuestions)
-      this.setState({ securityQuestions, loadedSecurityQuestions: true })
-    }
+    this.setState({ cardStatus: 'BLOCKED' })
   }
+
+  // componentWillUnmount() {
+  //   this.setState({
+  //     securityQuestions: [],
+  //     loadedSecurityQuestions: false,
+  //     unblockingCard: false,
+  //     cardStatus: 'UNKNOWN',
+  //     serviceUrl: 'https://serverless-9217-dev.twil.io/unblock-card'
+  //   })
+  // }
 
   render() {
     console.log('LOG => SEC CHECK RENDERING...', this.state)
@@ -85,56 +104,59 @@ class SecurityCheck extends Component {
         .filter(i => i.status === 'PENDING')
       console.log('LOG => PENDING SEC QUESTIONS =>', pendingSecurityQuestions)
       console.log('LOG => LOCAL STATE =>', this.state)
-      
-      if (!this.state.loadedSecurityQuestions) {
-        return null
-      }
 
-      if (pendingSecurityQuestions.length > 0) {
-        return (
-          <Theme.Provider theme='default'>
-            <Box marginTop="space30" marginBottom="space30" padding="space30">
-              <Heading as='h1' variant='heading10'>Security Check</Heading>
-              <Heading as='h3' variant='heading30'>
-                Reason: {customerData.journeyFlag || 'UNKNOWN'}
-              </Heading>
-              {
-                pendingSecurityQuestions
-                  .map(i => <SecurityQuestion key={i.key} userId={customerData.userId} question={i} />)
-              }
-            </Box>
-          </Theme.Provider>
-        )
-      } else if (this.state.cardStatus === 'UNBLOCKED') {
-        return (
-          <Theme.Provider theme='default'>
-            <Box marginTop="space30" marginBottom="space30" padding="space30">
-              <Heading as='h1' variant='heading10'>Security Check</Heading>
-              <Heading as='h3' variant='heading30'>
-                Card has been successfully unblocked!
-              </Heading>
-            </Box>
-          </Theme.Provider>
-        )
+      if (this.state.loadedSecurityQuestions) {
+        if (pendingSecurityQuestions.length > 0) {
+          return (
+            <Theme.Provider theme='default'>
+              <Box marginTop="space30" marginBottom="space30" padding="space30">
+                <Heading as='h1' variant='heading10'>Verificação de Segurança</Heading>
+                <Heading as='h3' variant='heading30'>
+                  Motivo: Compra suspeita
+                </Heading>
+                {
+                  pendingSecurityQuestions
+                    .map(i => <SecurityQuestion key={i.key} userId={customerData.userId} question={i} />)
+                }
+              </Box>
+            </Theme.Provider>
+          )
+        } else if (this.state.cardStatus === 'UNBLOCKED') {
+          return (
+            <Theme.Provider theme='default'>
+              <Box marginTop="space30" marginBottom="space30" padding="space30">
+                <Heading as='h1' variant='heading10'>Verificação de Segurança</Heading>
+                <Heading as='h3' variant='heading30'>
+                  Cartão desbloqueado com sucesso!
+                </Heading>
+              </Box>
+            </Theme.Provider>
+          )
+        } else {
+          return (
+            <Theme.Provider theme='default'>
+              <Box marginTop="space30" marginBottom="space30" padding="space30">
+                <Heading as='h1' variant='heading10'>Verificação de Segurança</Heading>
+                <Heading as='h3' variant='heading30'>
+                  Perguntas de verificação respondidas com sucesso.
+                </Heading>
+                <Button 
+                  variant="primary"
+                  id={`btn_unblock_card`}
+                  onClick={e => this.unblockCard(customerData.userId, e)}
+                  loading={unblockingCard}
+                >
+                  Desbloquear Cartão
+                </Button>
+              </Box>
+            </Theme.Provider>
+          )
+        }
       } else {
-        return (
-          <Theme.Provider theme='default'>
-            <Box marginTop="space30" marginBottom="space30" padding="space30">
-              <Heading as='h1' variant='heading10'>Security Check</Heading>
-              <Heading as='h3' variant='heading30'>
-                All security questions answered. Unblock card?
-              </Heading>
-              <Button 
-                variant="primary"
-                id={`btn_unblock_card`}
-                onClick={e => this.unblockCard(customerData.userId, e)}
-                loading={unblockingCard}
-              >
-                Unblock Card
-              </Button>
-            </Box>
-          </Theme.Provider>
-        )
+        // const { securityQuestions } = task.attributes.customerData
+        // console.log('LOG => Loading sec questions for task', task.taskSid, securityQuestions)
+        // this.setState({ securityQuestions, loadedSecurityQuestions: true, cardStatus: 'BLOCKED' })
+        return null
       }
     } else {
       return null
