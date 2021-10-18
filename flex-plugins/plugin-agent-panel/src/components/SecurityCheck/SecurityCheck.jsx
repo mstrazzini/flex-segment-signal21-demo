@@ -83,16 +83,6 @@ class SecurityCheck extends Component {
     this.setState({ cardStatus: 'BLOCKED' })
   }
 
-  // componentWillUnmount() {
-  //   this.setState({
-  //     securityQuestions: [],
-  //     loadedSecurityQuestions: false,
-  //     unblockingCard: false,
-  //     cardStatus: 'UNKNOWN',
-  //     serviceUrl: 'https://serverless-9217-dev.twil.io/unblock-card'
-  //   })
-  // }
-
   render() {
     console.log('LOG => SEC CHECK RENDERING...', this.state)
     const { task } = this.props
@@ -110,9 +100,9 @@ class SecurityCheck extends Component {
           return (
             <Theme.Provider theme='default'>
               <Box marginTop="space30" marginBottom="space30" padding="space30">
-                <Heading as='h1' variant='heading10'>Verificação de Segurança</Heading>
+                <Heading as='h1' variant='heading10'>Security Verification</Heading>
                 <Heading as='h3' variant='heading30'>
-                  Motivo: Compra suspeita
+                  Reason: Suspect Purchase
                 </Heading>
                 {
                   pendingSecurityQuestions
@@ -125,9 +115,9 @@ class SecurityCheck extends Component {
           return (
             <Theme.Provider theme='default'>
               <Box marginTop="space30" marginBottom="space30" padding="space30">
-                <Heading as='h1' variant='heading10'>Verificação de Segurança</Heading>
+                <Heading as='h1' variant='heading10'>Security Verification</Heading>
                 <Heading as='h3' variant='heading30'>
-                  Cartão desbloqueado com sucesso!
+                  Card sucessfully unblocked!
                 </Heading>
               </Box>
             </Theme.Provider>
@@ -136,9 +126,9 @@ class SecurityCheck extends Component {
           return (
             <Theme.Provider theme='default'>
               <Box marginTop="space30" marginBottom="space30" padding="space30">
-                <Heading as='h1' variant='heading10'>Verificação de Segurança</Heading>
+                <Heading as='h1' variant='heading10'>Security Verification</Heading>
                 <Heading as='h3' variant='heading30'>
-                  Perguntas de verificação respondidas com sucesso.
+                  Security questions sucessfully answered.
                 </Heading>
                 <Button 
                   variant="primary"
@@ -146,16 +136,13 @@ class SecurityCheck extends Component {
                   onClick={e => this.unblockCard(customerData.userId, e)}
                   loading={unblockingCard}
                 >
-                  Desbloquear Cartão
+                  Unblock card
                 </Button>
               </Box>
             </Theme.Provider>
           )
         }
       } else {
-        // const { securityQuestions } = task.attributes.customerData
-        // console.log('LOG => Loading sec questions for task', task.taskSid, securityQuestions)
-        // this.setState({ securityQuestions, loadedSecurityQuestions: true, cardStatus: 'BLOCKED' })
         return null
       }
     } else {
